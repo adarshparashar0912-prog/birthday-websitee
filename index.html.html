@@ -1,0 +1,292 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Birthday Surprise 💖</title>
+
+<style>
+body{
+  margin:0;
+  height:100vh;
+  display:flex;
+  justify-content:center;
+  align-items:center;
+  background:linear-gradient(135deg,#ff6a88,#ffb6c1);
+  font-family:Arial,sans-serif;
+  overflow:hidden;
+}
+
+.card{
+  background:#fff;
+  width:90%;
+  max-width:360px;
+  padding:25px;
+  border-radius:25px;
+  text-align:center;
+  box-shadow:0 20px 40px rgba(0,0,0,0.3);
+  animation:pop 1s ease;
+  z-index:5;
+}
+
+@keyframes pop{
+  from{transform:scale(0.7);opacity:0;}
+  to{transform:scale(1);opacity:1;}
+}
+
+h2{color:#ff3f7f;}
+p{color:#555;font-size:16px;line-height:1.6;}
+
+button{
+  margin-top:15px;
+  background:#ff3f7f;
+  color:#fff;
+  border:none;
+  padding:12px 25px;
+  border-radius:30px;
+  font-size:15px;
+  cursor:pointer;
+}
+
+/* Cake */
+#cake{font-size:85px;display:none;}
+.candle{font-size:28px;animation:glow 1s infinite alternate;}
+@keyframes glow{
+  from{text-shadow:0 0 5px gold;}
+  to{text-shadow:0 0 20px gold;}
+}
+.blow{animation:fadeOut 1s forwards;}
+@keyframes fadeOut{
+  to{opacity:0;transform:translateY(-20px);}
+}
+
+/* Effects layers */
+.confetti,.balloons,.hearts,.fireworks{
+  position:fixed;
+  top:0;left:0;
+  width:100%;height:100%;
+  pointer-events:none;
+  z-index:1;
+}
+
+/* Confetti */
+.piece{
+  position:absolute;
+  width:8px;height:8px;
+  animation:fall linear forwards;
+}
+@keyframes fall{
+  to{transform:translateY(100vh) rotate(360deg);opacity:0;}
+}
+
+/* Balloons */
+.balloon{
+  position:absolute;
+  width:30px;height:40px;
+  border-radius:50%;
+  animation:float 6s linear infinite;
+}
+@keyframes float{
+  from{transform:translateY(100vh);}
+  to{transform:translateY(-60px);}
+}
+
+/* Hearts */
+.heart{
+  position:absolute;
+  font-size:22px;
+  animation:heartFall 3s linear forwards;
+}
+@keyframes heartFall{
+  to{transform:translateY(100vh);opacity:0;}
+}
+
+/* Fireworks */
+.spark{
+  position:absolute;
+  width:6px;height:6px;
+  border-radius:50%;
+  animation:explode 1s ease-out forwards;
+}
+@keyframes explode{
+  to{transform:translate(var(--x),var(--y));opacity:0;}
+}
+
+.options{display:none;}
+
+#finalMsg{
+  display:none;
+  margin-top:15px;
+  font-size:15px;
+  color:#ff3f7f;
+  line-height:1.6;
+  animation:pop 1s ease;
+}
+</style>
+</head>
+
+<body>
+
+<!-- 🎵 Romantic Music -->
+<audio id="music" loop>
+  <source src="https://www.bensound.com/bensound-music/bensound-sunny.mp3" type="audio/mpeg">
+</audio>
+
+<div class="card">
+  <h2 id="title">Hey Sakshi 💖</h2>
+
+  <div id="cake">
+    🎂 <span class="candle">🕯️</span>
+    <span class="candle">🕯️</span>
+    <span class="candle">🕯️</span>
+  </div>
+
+  <p id="text"></p>
+
+  <button id="btn" onclick="nextStep()">Tap karo 👆</button>
+
+  <div class="options" id="options">
+    <button onclick="yesClick()">YES 💖</button>
+    <button onclick="noClick()">NO 🙈</button>
+  </div>
+
+  <div id="finalMsg">
+    Tu hamesha mere chehre pe smile le aati hai 💫<br>
+    Teri dosti meri life ka sabse khoobsurat hissa hai.<br>
+    Bestie ho toh bas tu jaisi ho 💖<br>
+    <b>Hamesha khush reh, tu sabse special hai!</b> ✨🥳
+  </div>
+</div>
+
+<div class="confetti" id="confetti"></div>
+<div class="balloons" id="balloons"></div>
+<div class="hearts" id="hearts"></div>
+<div class="fireworks" id="fireworks"></div>
+
+<script>
+let step=0;
+const title=document.getElementById("title");
+const text=document.getElementById("text");
+const cake=document.getElementById("cake");
+const btn=document.getElementById("btn");
+const options=document.getElementById("options");
+const music=document.getElementById("music");
+const candles=document.querySelectorAll(".candle");
+
+/* Typing Effect */
+function typeText(msg){
+  text.innerHTML="";
+  let i=0;
+  const t=setInterval(()=>{
+    text.innerHTML+=msg.charAt(i);
+    i++;
+    if(i>=msg.length) clearInterval(t);
+  },40);
+}
+
+function randomColor(){
+  const c=['#ff0','#f0f','#0ff','#0f0','#f00','#00f','#ff69b4'];
+  return c[Math.floor(Math.random()*c.length)];
+}
+
+/* Effects */
+function confettiBlast(){
+  for(let i=0;i<120;i++){
+    const p=document.createElement("div");
+    p.className="piece";
+    p.style.left=Math.random()*100+"%";
+    p.style.background=randomColor();
+    p.style.animationDuration=(2+Math.random()*3)+"s";
+    confetti.appendChild(p);
+    setTimeout(()=>p.remove(),5000);
+  }
+}
+
+function balloonRain(){
+  for(let i=0;i<15;i++){
+    const b=document.createElement("div");
+    b.className="balloon";
+    b.style.left=Math.random()*100+"%";
+    b.style.background=randomColor();
+    balloons.appendChild(b);
+    setTimeout(()=>b.remove(),7000);
+  }
+}
+
+function heartRain(){
+  for(let i=0;i<30;i++){
+    const h=document.createElement("div");
+    h.className="heart";
+    h.innerHTML="💖";
+    h.style.left=Math.random()*100+"%";
+    hearts.appendChild(h);
+    setTimeout(()=>h.remove(),4000);
+  }
+}
+
+function fireworksShow(){
+  for(let i=0;i<40;i++){
+    const s=document.createElement("div");
+    s.className="spark";
+    s.style.left="50%";
+    s.style.top="50%";
+    s.style.background=randomColor();
+    s.style.setProperty("--x",(Math.random()*200-100)+"px");
+    s.style.setProperty("--y",(Math.random()*200-100)+"px");
+    fireworks.appendChild(s);
+    setTimeout(()=>s.remove(),1000);
+  }
+}
+
+/* Flow */
+typeText("Tumhari special day aa gayi hai 🥰");
+
+function nextStep(){
+  step++;
+  music.play().catch(()=>{});
+  confettiBlast();
+
+  if(step===1){
+    title.innerHTML="🎉 Happy Birthday Sakshi 🎉";
+    typeText("Aaj ka din sirf tumhara hai 😄");
+  }
+  else if(step===2){
+    typeText("Ek cake tumhare liye 🎂");
+    btn.innerHTML="Show Cake 🎉";
+  }
+  else if(step===3){
+    cake.style.display="block";
+    typeText("Candles fook do 💨");
+    btn.innerHTML="Blow 🎂";
+    balloonRain();
+  }
+  else if(step===4){
+    candles.forEach(c=>c.classList.add("blow"));
+    btn.style.display="none";
+    setTimeout(()=>{
+      title.innerHTML="💖 Question 💖";
+      typeText("Kya tum meri forever bestie rahogi? 😄");
+      options.style.display="block";
+      heartRain();
+    },1000);
+  }
+}
+
+function yesClick(){
+  title.innerHTML="YAY 😍";
+  typeText("Bestie forever 💖 Happy Birthday 🎂");
+  options.style.display="none";
+  document.getElementById("finalMsg").style.display="block";
+  confettiBlast();
+  balloonRain();
+  heartRain();
+  fireworksShow();
+}
+
+function noClick(){
+  typeText("Arre 😅 YES hi banta hai!");
+}
+</script>
+
+</body>
+</html>
